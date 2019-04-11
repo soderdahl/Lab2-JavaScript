@@ -1,37 +1,44 @@
-import { getQueryString } from './helpers'
 
-export const url = 'https://www.forverkliga.se/JavaScript/api/crud.php'
 
-export function addBook({title, author}, cb){
-  const key = localStorage.getItem('apiKey')
+export const url = 'https://www.forverkliga.se/JavaScript/api/crud.php?'
 
-   title = document.getElementById('title').value
+export function addBook(book, cb){
+  const key = localStorage.getItem('apiKey')   
 
-   author = document.getElementById('author').value  
-
+  if(key){
+    request(`key=${key}&op=insert&title=${book.title}&author=${book.author}`, function(
+      data){
   
+          cb(data)
+        console.log(data)
+    })
+  } else{
+   
   getApiKey (function(key) {
-    request(request(`key=${key}&op=insert&title=${title}&author=${author}`, function(
+    request(`key=${key}&op=insert&title=${book.title}&author=${book.author}`, function(
     data){
-      if(cb) {
+     
         cb(data)
-      }
-    }))
+      console.log(data)
+    })
   })
 }
+}
 
-/* export function fetchBooks(cb) {
-  const key = localStorage.getItem('apiKey')
-  getApi(function(key) {
-    request('key${key}&op=select', function(data) {
+export function fetchBooks(book, cb) {
+//const key = localStoreItem('apiKey)
+  getApiKey(function(key) {
+    request(`key=${key}&op=insert&title=${book.title}&author=${book.author}`, function(data) {
       if(cb) {
         cb(data)
       }
     })
   })
-} */
+}
 
-export function fetchBooks(e) {
+
+
+/* export function fetchBooks(e) {
 
   const key = localStorage.getItem('apiKey')
 
@@ -57,7 +64,7 @@ export function fetchBooks(e) {
 
   }
 
-}
+} */
 
 
 
@@ -70,23 +77,17 @@ export function fetchBooks(e) {
 
 // Tar emot ett nummer som parameter som indikerar en gräns på hur många försöka som får göras (limit)
 
-function request(qs, cb, limit = 10) { 
+export function request(qs, cb, limit = 10) { 
 
   fetch(`${url}${qs}`)
 
     .then(function(response) {
 
-      // Konverta svaret till JavaScript-objekt
-
-      return response.json()
+         return response.json()
 
     })
 
     .then(function(data) {
-
-      // Kolla hur svaret ser ut från apiet
-
-      // Om operationen lyckades så kör funktionen cb
 
       if (data.status === 'success') {
 
@@ -104,7 +105,7 @@ function request(qs, cb, limit = 10) {
 
       } else {
 
-        console.log(data.message, 'tries:', limit)
+        console.log(data.message)
 
       }
 
